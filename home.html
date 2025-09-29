@@ -187,19 +187,23 @@
     <div class="main-content-wrapper">
         <!-- Main Content Area -->
         <div class="w-full max-w-lg p-6 rounded-xl text-center neon-box shadow-2xl transition duration-500 hover:shadow-var(--neon-cyan)/70">
-            <!-- Cartoon Ghost Graphic -->
-            <div class="flex justify-center">
-                <div class="ghost"></div>
-            </div>
-
+            
             <h1 class="neon-title mb-4">
                 TRANSMISSION
             </h1>
             <h2 class="neon-text-green mb-6 leading-tight">
                 NEON NIGHTMARE
             </h2>
+            
+            <!-- Cartoon Ghost Graphic -->
+            <div class="flex justify-center">
+                <div class="ghost"></div>
+            </div>
 
-            <div class="space-y-4 md:space-y-6">
+            <div class="space-y-4 md:space-y-6 mt-6">
+                <p class="neon-text-cyan text-xl md:text-2xl">
+                    [SYSTEM_LOG: HOSTILE ENVIRONMENT DETECTED]
+                </p>
                 <p class="neon-text-cyan">
                     — SAVE THE DATE —
                 </p>
@@ -211,10 +215,34 @@
                 <p class="neon-text-cyan text-xl md:text-2xl">
                     START TIME: 6:00 PM <span class="hidden md:inline">|</span> <br class="md:hidden"> LOCATION: POTTER AND GROVE
                 </p>
+                <p class="neon-text-cyan text-base md:text-lg pt-4 border-t border-dashed border-var(--neon-cyan) mx-auto max-w-xs">
+                    // COSTUMES MANDATORY //
+                </p>
             </div>
 
         </div>
     </div> <!-- End main-content-wrapper -->
+
+    <script>
+        /**
+         * Client-side protection logic using sessionStorage.
+         * Checks if the 'access_granted' flag was set by index.html upon successful login.
+         * If not set, it redirects the user immediately to the login page.
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            const hasAccess = sessionStorage.getItem('access_granted');
+            
+            if (hasAccess !== 'true') {
+                // No access flag found, unauthorized entry.
+                // Switching from replace('./index.html') to href = 'index.html' to fix SyntaxError in the environment
+                window.location.href = 'index.html'; 
+            } else {
+                // Access granted. Remove the flag immediately after the check 
+                // to ensure the user can't refresh/revisit without re-logging in.
+                sessionStorage.removeItem('access_granted');
+            }
+        });
+    </script>
 
 </body>
 </html>
