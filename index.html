@@ -22,7 +22,6 @@
             background-color: var(--bg-color);
             min-height: 100vh;
             display: flex; /* Changed body to flex container */
-            flex-direction: column; /* Stacks nav and main content */
             color: var(--neon-cyan);
             overflow-x: hidden; /* Prevent horizontal scrolling */
         }
@@ -42,23 +41,6 @@
             animation: flicker 1.5s infinite alternate;
         }
         
-        /* Nav Link Styling */
-        .nav-link {
-            color: var(--neon-cyan);
-            text-shadow: 0 0 5px var(--neon-cyan);
-            transition: all 0.3s ease;
-        }
-        .nav-link:hover {
-            color: var(--neon-pink);
-            text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
-            transform: translateY(-2px);
-        }
-        .nav-link.active {
-            color: var(--neon-green);
-            text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
-            pointer-events: none; /* Make current page unclickable */
-        }
-
 
         .neon-text-green {
             font-size: 1.5rem;
@@ -177,10 +159,6 @@
             <div class="flex justify-center">
                 <div class="ghost"></div>
             </div>
-
-            <h1 class="neon-title mb-4">
-                TRANSMISSION
-            </h1>
 
             <p class="neon-text-green mt-8 text-lg md:text-xl">
                 ACCESS CODE REQUIRED FOR ENTRY.
