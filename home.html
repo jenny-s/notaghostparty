@@ -94,7 +94,8 @@
             width: 80px;
             height: 100px;
             background-color: var(--neon-green);
-            border-radius: 50% 50% 10% 10%;
+            /* Set the top and side border-radius, but keep bottom small for sharper waves */
+            border-radius: 50% 50% 5% 5%;
             position: relative;
             margin-bottom: 20px;
             animation: float-ghost 3s infinite ease-in-out alternate;
@@ -104,19 +105,24 @@
                 0 0 30px rgba(0, 255, 153, 0.8);
         }
 
+        /* FIX: Creates clear, distinct scallops/waves using a repeating radial gradient mask */
         .ghost::before {
             content: '';
             position: absolute;
-            bottom: -15px;
+            bottom: -15px; /* Moved down to allow for deeper wave shape */
             left: 0;
             right: 0;
-            height: 20px;
-            background: linear-gradient(to right,
-                transparent 0%, var(--bg-color) 10%, var(--neon-green) 15%,
-                var(--neon-green) 85%, var(--bg-color) 90%, transparent 100%);
-            mask-image: radial-gradient(circle, transparent 10px, black 10px);
-            mask-size: 20% 100%;
-            mask-position: 0 -10px;
+            height: 40px; /* Deeper waves */
+            background-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            
+            /* Use a highly controlled radial gradient mask to ensure clear separation */
+            mask-image: radial-gradient(circle 8px at 50% 0, transparent 99%, black 100%);
+            -webkit-mask-image: radial-gradient(circle 8px at 50% 0, transparent 99%, black 100%);
+            
+            mask-size: 25% 100%; /* Creates 4 distinct scallops, allowing space between peaks */
+            mask-repeat: repeat-x;
+            mask-position: 0 0;
         }
 
         /* Keyframes for animation */
@@ -154,6 +160,14 @@
             .ghost {
                 width: 120px;
                 height: 150px;
+            }
+            .ghost::before {
+                bottom: -20px;
+                height: 50px;
+                /* Adjust mask size for the larger ghost to maintain the look */
+                mask-image: radial-gradient(circle 12px at 50% 0, transparent 99%, black 100%);
+                -webkit-mask-image: radial-gradient(circle 12px at 50% 0, transparent 99%, black 100%);
+                mask-size: 25% 100%; 
             }
         }
         
@@ -234,7 +248,6 @@
             
             if (hasAccess !== 'true') {
                 // No access flag found, unauthorized entry.
-                // Switching from replace('./index.html') to href = 'index.html' to fix SyntaxError in the environment
                 window.location.href = 'index.html'; 
             } else {
                 // Access granted. Remove the flag immediately after the check 
