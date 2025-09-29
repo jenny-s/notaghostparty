@@ -88,12 +88,41 @@
                 0 0 40px var(--neon-cyan) inset,
                 0 0 4px var(--neon-cyan);
         }
-        
-        /* NEW: Style for the placeholder image to add the neon glow and animation */
-        .image-glow {
-            box-shadow: 0 0 15px var(--neon-green), 0 0 30px rgba(0, 255, 153, 0.8);
-            border-radius: 8px; /* Added some rounding to the image border */
-            filter: brightness(1.2); /* Enhance the green color */
+
+        /* Simple CSS Ghost Graphic (Used for aesthetics only) */
+        .ghost {
+            width: 80px;
+            height: 100px;
+            background-color: var(--neon-green);
+            /* Set the top and side border-radius, but keep bottom small for sharper waves */
+            border-radius: 50% 50% 5% 5%;
+            position: relative;
+            margin-bottom: 20px;
+            animation: float-ghost 3s infinite ease-in-out alternate;
+            box-shadow:
+                0 0 5px var(--neon-green),
+                0 0 15px var(--neon-green),
+                0 0 30px rgba(0, 255, 153, 0.8);
+        }
+
+        /* FIX: Creates clear, distinct scallops/waves using a repeating radial gradient mask */
+        .ghost::before {
+            content: '';
+            position: absolute;
+            bottom: -15px; /* Moved down to allow for deeper wave shape */
+            left: 0;
+            right: 0;
+            height: 40px; /* Deeper waves */
+            background-color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+            
+            /* Use a highly controlled radial gradient mask to ensure clear separation */
+            mask-image: radial-gradient(circle 8px at 50% 0, transparent 99%, black 100%);
+            -webkit-mask-image: radial-gradient(circle 8px at 50% 0, transparent 99%, black 100%);
+            
+            mask-size: 25% 100%; /* Creates 4 distinct scallops, allowing space between peaks */
+            mask-repeat: repeat-x;
+            mask-position: 0 0;
         }
 
         /* Keyframes for animation */
@@ -127,6 +156,18 @@
             }
             .neon-text-cyan {
                 font-size: 1.5rem;
+            }
+            .ghost {
+                width: 120px;
+                height: 150px;
+            }
+            .ghost::before {
+                bottom: -20px;
+                height: 50px;
+                /* Adjust mask size for the larger ghost to maintain the look */
+                mask-image: radial-gradient(circle 12px at 50% 0, transparent 99%, black 100%);
+                -webkit-mask-image: radial-gradient(circle 12px at 50% 0, transparent 99%, black 100%);
+                mask-size: 25% 100%; 
             }
         }
         
@@ -168,14 +209,9 @@
                 NEON NIGHTMARE
             </h2>
             
-            <!-- Placeholder Image Graphic replacing CSS Ghost -->
-            <div class="flex justify-center mb-6">
-                <img 
-                    src="https://placehold.co/120x150/00ff99/0d001a?text=PHANTOM" 
-                    alt="Neon Phantom Placeholder"
-                    class="image-glow w-24 h-32 md:w-32 md:h-40 object-cover rounded-xl"
-                    style="animation: float-ghost 3s infinite ease-in-out alternate;"
-                >
+            <!-- Cartoon Ghost Graphic -->
+            <div class="flex justify-center">
+                <div class="ghost"></div>
             </div>
 
             <div class="space-y-4 md:space-y-6 mt-6">
