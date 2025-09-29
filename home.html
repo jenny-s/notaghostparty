@@ -8,6 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load a retro, glitchy font for the main title -->
     <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <!-- Load Tone.js for music generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.min.js"></script>
     <style>
         /* Custom CSS for Neon Effect and Retro Styling */
         :root {
@@ -25,6 +27,7 @@
             flex-direction: column; /* Stacks nav and main content */
             color: var(--neon-cyan);
             overflow-x: hidden; /* Prevent horizontal scrolling */
+            position: relative; /* For absolute overlay */
         }
 
         .neon-title {
@@ -88,7 +91,27 @@
                 0 0 20px var(--neon-cyan),
                 0 0 40px var(--neon-cyan) inset,
                 0 0 4px var(--neon-cyan);
+            position: relative; /* Context for sound-prompt overlay */
         }
+        
+        /* Overlay for sound activation */
+        #sound-prompt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(2px);
+            display: none; /* Controlled by JavaScript */
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: pointer;
+            text-shadow: 0 0 10px var(--neon-pink);
+            transition: opacity 0.3s;
+        }
+
 
         /* Simple CSS Ghost Graphic (Restored original per previous instruction) */
         .ghost {
@@ -197,9 +220,13 @@
     <div class="main-content-wrapper">
         <!-- Main Content Area -->
         <!-- p-4 on mobile and p-6 on desktop gives maximum internal space -->
-        <div class="w-full max-w-lg p-4 md:p-6 rounded-xl text-center neon-box shadow-2xl transition duration-500 hover:shadow-var(--neon-cyan)/70">
+        <div id="main-content-box" class="w-full max-w-lg p-4 md:p-6 rounded-xl text-center neon-box shadow-2xl transition duration-500 hover:shadow-var(--neon-cyan)/70">
             
-            <!-- TEXT IS NOW GUARANTEED TO FIT -->
+            <!-- Audio Activation Prompt Overlay -->
+            <div id="sound-prompt" class="neon-text-cyan text-2xl md:text-3xl">
+                CLICK TO ENABLE AUDIO 🔊
+            </div>
+
             <h1 class="neon-title mb-4">
                 TRANSMISSION
             </h1>
@@ -236,22 +263,77 @@
     </div> <!-- End main-content-wrapper -->
 
     <script>
+        // Tone.js variables
+        let musicStarted = false;
+        
         /**
-         * Client-side protection logic using sessionStorage.
-         * Checks if the 'access_granted' flag was set by index.html upon successful login.
-         * If not set, it redirects the user immediately to the login page.
+         * Sets up and starts the spooky ambient synth music.
          */
+        function startSpookyMusic() {
+            if (musicStarted) return;
+            musicStarted = true;
+            
+            // 1. Setup the effect (Deep Reverb for atmosphere)
+            const reverb = new Tone.Reverb({ decay: 5, wet: 0.6 }).toDestination();
+
+            // 2. Setup the synth (Sawtooth for a dark, analog sound)
+            const synth = new Tone.Synth({
+                oscillator: { type: "sawtooth" },
+                envelope: { attack: 4, decay: 0.5, sustain: 0.2, release: 8 }, // Slow, dark attack/release
+            }).connect(reverb);
+
+            // 3. Define a spooky, dissonant sequence in a low octave
+            const notes = ["C2", "G1", "C#2", "F#1", "D2", "A1", "Eb2", "G#1"];
+            
+            // 4. Create the sequence (plays one note every 2 "measures" or 2 seconds at 40 BPM)
+            const sequence = new Tone.Sequence((time, note) => {
+                synth.triggerAttackRelease(note, "2n", time); // hold note for half a beat
+            }, notes, "2n").start(0);
+
+            // 5. Set transport and loop
+            Tone.Transport.bpm.value = 40; // Very slow tempo
+            Tone.Transport.loop = true;
+            Tone.Transport.loopEnd = notes.length * 0.5; // Loop length
+            Tone.Transport.start();
+            console.log("Spooky synth music started.");
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const hasAccess = sessionStorage.getItem('access_granted');
-            
+            const mainContentBox = document.getElementById('main-content-box');
+            const soundPrompt = document.getElementById('sound-prompt');
+
             if (hasAccess !== 'true') {
                 // No access flag found, unauthorized entry.
                 window.location.href = 'index.html'; 
-            } else {
-                // Access granted. Remove the flag immediately after the check 
-                // to ensure the user can't refresh/revisit without re-logging in.
-                // sessionStorage.removeItem('access_granted');
-            }
+                return;
+            } 
+            
+            // Access granted. Show sound prompt and attach listener.
+            soundPrompt.style.display = 'flex';
+
+            const enableSound = async () => {
+                try {
+                    await Tone.start();
+                    console.log('Audio Context started.');
+                    
+                    // Hide prompt and start music
+                    soundPrompt.style.opacity = '0';
+                    setTimeout(() => {
+                        soundPrompt.style.display = 'none';
+                    }, 300);
+
+                    startSpookyMusic();
+
+                    // Remove listener after music starts
+                    mainContentBox.removeEventListener('click', enableSound);
+                } catch (error) {
+                    console.error("Failed to start audio context:", error);
+                    // Optionally alert the user or log a visible message
+                }
+            };
+
+            mainContentBox.addEventListener('click', enableSound);
         });
     </script>
 
