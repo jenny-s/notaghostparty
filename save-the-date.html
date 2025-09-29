@@ -142,7 +142,23 @@
     </style>
 </head>
 <body class="p-4 md:p-8">
-
+    
+    <!-- NEW: Navigation Bar -->
+    <nav class="w-full text-center py-4 text-xl tracking-wider uppercase border-b-2 border-dashed border-var(--neon-cyan)">
+        <div class="flex justify-center space-x-6 md:space-x-12">
+            <!-- Link to Gateway Page -->
+            <a href="index.html" class="nav-link">START</a>
+            
+            <!-- Link to Password Protected RSVP Page -->
+            <a href="home.html" class="nav-link">DETAILS</a>
+            
+            <!-- Current Page (Active/Unclickable) -->
+            <span class="nav-link active">RSVP</span> 
+            
+        </div>
+    </nav>
+    <!-- END: Navigation Bar -->
+    
     <div class="w-full max-w-lg p-6 rounded-xl text-center neon-box shadow-2xl transition duration-500 hover:shadow-var(--neon-cyan)/70">
         <!-- Cartoon Ghost Graphic -->
         <div class="flex justify-center">
