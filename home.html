@@ -275,7 +275,7 @@
             musicStarted = true;
             
             // 1. Setup Volume Control (REDUCED VOLUME) and Master Effects
-            const masterVolume = new Tone.Volume(-10).toDestination();
+            const masterVolume = new Tone.Volume(-15).toDestination();
 
             // Increased decay for more ambience
             const reverb = new Tone.Reverb({ decay: 7, wet: 0.7 }).connect(masterVolume); 
@@ -286,8 +286,9 @@
             // 2. AIRY LOW BASS SYNTH (Dedicated for the low-frequency drone)
             const bassSynth = new Tone.Synth({
                 oscillator: { type: "sine" }, // Sine wave for a very smooth, airy, low-frequency sound
-                envelope: { attack: 10, decay: 1, sustain: 0.7, release: 12 }, // Very long attack/release for an ethereal drone
-                volume: -10, // Keep the bass even more subtle in the mix
+                // INCREASED VOLUME (0 dB) and FASTER ATTACK (4s) for better audibility
+                envelope: { attack: 4, decay: 1, sustain: 0.7, release: 12 }, // Very long release for an ethereal drone
+                volume: 10 
             }).connect(reverb);
 
             // 3. MID/HIGH CHORD SYNTH (PolySynth for musical, unsettling harmony)
