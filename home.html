@@ -283,12 +283,28 @@
             // Slightly slower Tremolo for a wavering, unsettling effect
             const tremolo = new Tone.Tremolo(3, 0.4).start().connect(reverb); 
 
-            // 2. AIRY LOW BASS SYNTH (Dedicated for the low-frequency drone)
-            const bassSynth = new Tone.Synth({
-                oscillator: { type: "sine" }, // Sine wave for a very smooth, airy, low-frequency sound
-                // INCREASED VOLUME (0 dB) and FASTER ATTACK (4s) for better audibility
-                envelope: { attack: 1, decay: 1, sustain: 0.7, release: 12 }, // Very long release for an ethereal drone
-                volume: 15
+            // 2. AIRY LOW BASS SYNTH (Dedicated for the low-frequency drone with slow frequency sweep)
+            // Switched to FMSynth to allow for frequency modulation control
+            const bassSynth = new Tone.FMSynth({
+                volume: 15,
+                harmonicity: 1.5, // Subtle detune for a spooky, non-perfect sound
+                modulationIndex: 5, // Amount of frequency wobbling
+                
+                // Carrier Oscillator/Envelope (Controls volume fading)
+                carrier: {
+                    oscillator: { type: "sine" }, // Main sine wave for airy bass
+                    envelope: { attack: 1, decay: 1, sustain: 0.7, release: 12 },
+                },
+                
+                // Modulator Envelope (Controls the frequency sweep - the requested feature)
+                modulator: {
+                    envelope: { 
+                        attack: 3, // SLOW FREQUENCY SWEEP IN (takes 8 seconds to reach max wobble)
+                        decay: 1,
+                        sustain: 0.5,
+                        release: 3 // SLOW FREQUENCY SWEEP OUT
+                    }
+                }
             }).connect(reverb);
 
             // 3. MID/HIGH CHORD SYNTH (PolySynth for musical, unsettling harmony)
@@ -301,11 +317,11 @@
             
             // Spooky, musical chords (mid/high)
             const chords = [
-                ["D4", "F3", "A4"], // D minor
-                ["C4", "Eb4", "G3"], // C minor
+                ["D4", "F4", "A4"], // D minor
+                ["C4", "Eb4", "G4"], // C minor
             ];
             // Slow, deep bass notes
-            const bassNotes = ["D1", "C1", "D2", "A#2"]; // Very low, deep notes
+            const bassNotes = ["D1", "C1", "D1", "A#0"]; // Very low, deep notes
 
             // 5. Create the sequences
 
