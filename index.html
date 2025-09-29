@@ -223,8 +223,6 @@
 
     <script type="module">
         // --- Firebase Setup (Required for persistence in this environment, but not used for static password check) ---
-        // The password check logic below is client-side only. 
-        // This block is boilerplate for potential future features needing auth/database.
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         // import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         
@@ -268,6 +266,9 @@
                     statusMessage.textContent = '[ACCESS GRANTED] Redirecting...';
                     statusMessage.style.color = 'var(--neon-green)';
                     
+                    // --- NEW: Set session flag before redirecting to home.html ---
+                    sessionStorage.setItem('access_granted', 'true');
+
                     // Redirect after showing success message
                     setTimeout(() => {
                         window.location.href = 'home.html';
