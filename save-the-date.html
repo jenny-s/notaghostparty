@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neon Nightmare Save the Date</title>
+    <title>Neon Nightmare Details</title>
     <!-- Load Tailwind CSS for utility classes and responsiveness -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Load a retro, glitchy font for the main title -->
@@ -21,10 +21,8 @@
             font-family: 'VT323', monospace;
             background-color: var(--bg-color);
             min-height: 100vh;
-            display: flex;
+            display: flex; /* Changed body to flex container */
             flex-direction: column; /* Stacks nav and main content */
-            align-items: center;
-            justify-content: center;
             color: var(--neon-cyan);
             overflow-x: hidden; /* Prevent horizontal scrolling */
         }
@@ -43,6 +41,24 @@
                 0 0 151px var(--neon-pink);
             animation: flicker 1.5s infinite alternate;
         }
+        
+        /* Nav Link Styling */
+        .nav-link {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan);
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover {
+            color: var(--neon-pink);
+            text-shadow: 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+            transform: translateY(-2px);
+        }
+        .nav-link.active {
+            color: var(--neon-green);
+            text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green);
+            pointer-events: none; /* Make current page unclickable */
+        }
+
 
         .neon-text-green {
             font-size: 1.5rem;
@@ -73,7 +89,7 @@
                 0 0 4px var(--neon-cyan);
         }
 
-        /* Simple CSS Ghost Graphic */
+        /* Simple CSS Ghost Graphic (Used for aesthetics only) */
         .ghost {
             width: 80px;
             height: 100px;
@@ -140,10 +156,19 @@
                 height: 150px;
             }
         }
+        
+        /* New container for vertical centering of main content */
+        .main-content-wrapper {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
-    
+
     <!-- NEW: Navigation Bar -->
     <nav class="w-full text-center py-4 text-xl tracking-wider uppercase border-b-2 border-dashed border-var(--neon-cyan)">
         <div class="flex justify-center space-x-6 md:space-x-12">
@@ -159,6 +184,46 @@
         </div>
     </nav>
     <!-- END: Navigation Bar -->
+
+    <div class="main-content-wrapper">
+        <!-- Main Content Area -->
+        <div class="w-full max-w-lg p-6 rounded-xl text-center neon-box shadow-2xl transition duration-500 hover:shadow-var(--neon-cyan)/70">
+        <!-- Cartoon Ghost Graphic -->
+        <div class="flex justify-center">
+            <div class="ghost"></div>
+        </div>
+
+        <h1 class="neon-title mb-4">
+            LEVEL UP
+        </h1>
+
+        <p class="neon-text-green mt-8 text-lg md:text-xl">
+            Insert Coin to Continue...
+        </p>
+        
+        <!-- The button is centered and only sized to fit the text -->
+        <div class="mt-6 flex justify-center">
+            <button onclick="window.open('https://forms.gle/JHNCW9HeKDctQw8s7', '_blank')" class="px-6 py-3 text-lg font-bold uppercase tracking-wider rounded-lg transition duration-300 transform active:scale-95" style="
+                background-color: var(--neon-pink);
+                color: var(--bg-color);
+                border: 2px solid var(--neon-pink);
+                box-shadow: 0 0 15px var(--neon-pink), 0 0 25px var(--neon-pink) inset;
+                font-family: 'VT323', monospace;
+            ">
+                <span class="text-sm md:text-base">RSVP NOW!</span>
+            </button>
+        </div>
+                
+    </div> <!-- End main-content-wrapper -->
+
+</body>
+</html>
+
+
+
+
+
+
     
     <div class="w-full max-w-lg p-6 rounded-xl text-center neon-box shadow-2xl transition duration-500 hover:shadow-var(--neon-cyan)/70">
         <!-- Cartoon Ghost Graphic -->
