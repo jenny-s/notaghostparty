@@ -203,7 +203,8 @@
 <body class="p-4 md:p-8">
 
     <!-- NEW: Navigation Bar -->
-    <nav class="w-full text-center py-4 text-xl tracking-wider uppercase border-b-2 border-dashed border-var(--neon-cyan)">
+    <!-- ADDED mb-6 for a margin below the nav bar, creating the gap -->
+    <nav class="w-full text-center py-4 text-xl tracking-wider uppercase border-b-2 border-dashed border-var(--neon-cyan) mb-6">
         <div class="flex justify-center space-x-6 md:space-x-12">
             <!-- Link to Gateway Page -->
             <a href="index.html" class="nav-link">START</a>
@@ -273,27 +274,39 @@
             if (musicStarted) return;
             musicStarted = true;
             
-            // 1. Setup the effect (Deep Reverb for atmosphere)
-            const reverb = new Tone.Reverb({ decay: 5, wet: 0.6 }).toDestination();
+            // 1. Setup Volume Control (REDUCED VOLUME) and Master Effects
+            // Lowers the volume by 10 dB for a background ambiance.
+            const volume = new Tone.Volume(-10).toDestination();
 
-            // 2. Setup the synth (Sawtooth for a dark, analog sound)
-            const synth = new Tone.Synth({
-                oscillator: { type: "sawtooth" },
-                envelope: { attack: 4, decay: 0.5, sustain: 0.2, release: 8 }, // Slow, dark attack/release
-            }).connect(reverb);
-
-            // 3. Define a spooky, dissonant sequence in a low octave
-            const notes = ["C2", "G1", "C#2", "F#1", "D2", "A1", "Eb2", "G#1"];
+            // Increased decay for more ambience
+            const reverb = new Tone.Reverb({ decay: 7, wet: 0.7 }).connect(volume); 
             
-            // 4. Create the sequence (plays one note every 2 "measures" or 2 seconds at 40 BPM)
-            const sequence = new Tone.Sequence((time, note) => {
-                synth.triggerAttackRelease(note, "2n", time); // hold note for half a beat
-            }, notes, "2n").start(0);
+            // Slightly slower Tremolo for a wavering, unsettling effect
+            const tremolo = new Tone.Tremolo(3, 0.4).start().connect(reverb); 
+
+            // 2. Setup PolySynth for multi-note chords and arpeggios
+            const synth = new Tone.PolySynth(Tone.Synth, {
+                oscillator: { type: "square" }, // Square wave for brightness/texture (mid/high components)
+                envelope: { attack: 4, decay: 0.2, sustain: 0.1, release: 8 }, // Long attack and release
+            }).connect(tremolo);
+
+            // 3. Define a sequence of spooky, musical chords that span mid/high frequencies
+            const chords = [
+                ["D4", "F4", "A4"], // D minor (Mid/High)
+                ["C4", "Eb4", "G4"], // C minor (Mid/High)
+                ["D3", "A3"],        // Lower, sparser voicing (Mid)
+                ["C3", "G3"],        // Lower, sparser voicing (Mid)
+            ];
+
+            // 4. Create the sequence (triggers the chords every 2 measures)
+            const sequence = new Tone.Sequence((time, chord) => {
+                synth.triggerAttackRelease(chord, "4n", time);
+            }, chords, "2m").start(0);
 
             // 5. Set transport and loop
-            Tone.Transport.bpm.value = 40; // Very slow tempo
+            Tone.Transport.bpm.value = 25; // Very slow tempo
             Tone.Transport.loop = true;
-            Tone.Transport.loopEnd = notes.length * 0.5; // Loop length
+            Tone.Transport.loopEnd = "8m"; // Loop over 8 measures for less repetition
             Tone.Transport.start();
             console.log("Spooky synth music started.");
         }
