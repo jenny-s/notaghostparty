@@ -275,38 +275,53 @@
             musicStarted = true;
             
             // 1. Setup Volume Control (REDUCED VOLUME) and Master Effects
-            // Lowers the volume by 10 dB for a background ambiance.
-            const volume = new Tone.Volume(-10).toDestination();
+            const masterVolume = new Tone.Volume(-10).toDestination();
 
             // Increased decay for more ambience
-            const reverb = new Tone.Reverb({ decay: 7, wet: 0.7 }).connect(volume); 
+            const reverb = new Tone.Reverb({ decay: 7, wet: 0.7 }).connect(masterVolume); 
             
             // Slightly slower Tremolo for a wavering, unsettling effect
             const tremolo = new Tone.Tremolo(3, 0.4).start().connect(reverb); 
 
-            // 2. Setup PolySynth for multi-note chords and arpeggios
-            const synth = new Tone.PolySynth(Tone.Synth, {
+            // 2. AIRY LOW BASS SYNTH (Dedicated for the low-frequency drone)
+            const bassSynth = new Tone.Synth({
+                oscillator: { type: "sine" }, // Sine wave for a very smooth, airy, low-frequency sound
+                envelope: { attack: 10, decay: 1, sustain: 0.7, release: 12 }, // Very long attack/release for an ethereal drone
+                volume: -10, // Keep the bass even more subtle in the mix
+            }).connect(reverb);
+
+            // 3. MID/HIGH CHORD SYNTH (PolySynth for musical, unsettling harmony)
+            const chordSynth = new Tone.PolySynth(Tone.Synth, {
                 oscillator: { type: "square" }, // Square wave for brightness/texture (mid/high components)
-                envelope: { attack: 4, decay: 0.2, sustain: 0.1, release: 8 }, // Long attack and release
+                envelope: { attack: 4, decay: 0.2, sustain: 0.1, release: 6 }, // Long attack and release
             }).connect(tremolo);
 
-            // 3. Define a sequence of spooky, musical chords that span mid/high frequencies
+            // 4. Define sequences
+            
+            // Spooky, musical chords (mid/high)
             const chords = [
-                ["D4", "F4", "A4"], // D minor (Mid/High)
-                ["C4", "Eb4", "G4"], // C minor (Mid/High)
-                ["D3", "A3"],        // Lower, sparser voicing (Mid)
-                ["C3", "G3"],        // Lower, sparser voicing (Mid)
+                ["D4", "F4", "A4"], // D minor
+                ["C4", "Eb4", "G4"], // C minor
             ];
+            // Slow, deep bass notes
+            const bassNotes = ["D1", "C1", "D1", "A#0"]; // Very low, deep notes
 
-            // 4. Create the sequence (triggers the chords every 2 measures)
-            const sequence = new Tone.Sequence((time, chord) => {
-                synth.triggerAttackRelease(chord, "4n", time);
-            }, chords, "2m").start(0);
+            // 5. Create the sequences
 
-            // 5. Set transport and loop
-            Tone.Transport.bpm.value = 25; // Very slow tempo
+            // Chord sequence: plays chords very slowly every 4 measures
+            const chordSequence = new Tone.Sequence((time, chord) => {
+                chordSynth.triggerAttackRelease(chord, "2n", time);
+            }, chords, "4m").start(0);
+
+            // Bass sequence: triggers a new bass note every 4 measures (creating a long, evolving drone)
+            const bassSequence = new Tone.Sequence((time, note) => {
+                bassSynth.triggerAttackRelease(note, "4m", time); // Hold note for a full 4 measures
+            }, bassNotes, "4m").start(0); 
+
+            // 6. Set transport and loop
+            Tone.Transport.bpm.value = 30; // Very slow tempo
             Tone.Transport.loop = true;
-            Tone.Transport.loopEnd = "8m"; // Loop over 8 measures for less repetition
+            Tone.Transport.loopEnd = "16m"; // Loop over 16 measures for even less repetition (4 bass notes * 4 measures/note)
             Tone.Transport.start();
             console.log("Spooky synth music started.");
         }
